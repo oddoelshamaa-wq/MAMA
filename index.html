@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إلى أعظم ملكة - أمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #d4af37; --deep-red: #5e0d0d; --pink: #ff4d6d; }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; overflow-x: hidden; font-family: 'Cairo', sans-serif;
+            color: white; perspective: 1500px;
+        }
+
+        /* شاشة البداية الملكية */
+        #intro-overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, #2c0514, #000);
+            z-index: 10000; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; transition: 1.5s;
+        }
+
+        .start-btn {
+            background: var(--gold); border: none; padding: 20px 40px;
+            font-size: 1.5rem; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px var(--gold); animation: pulse 2s infinite;
+            font-family: 'Cairo', sans-serif; font-weight: 900;
+        }
+
+        /* حاوية الـ 3D */
+        #world {
+            display: none; width: 100%; height: 100vh; 
+            background: radial-gradient(circle at center, #450920 0%, #000 100%);
+            overflow-y: auto; overflow-x: hidden;
+        }
+
+        /* الصندوق الـ 3D */
+        .box-container {
+            height: 400px; display: flex; justify-content: center; align-items: center;
+            transform-style: preserve-3d; margin-top: 50px;
+        }
+
+        .gift-box {
+            width: 150px; height: 150px; position: relative;
+            transform-style: preserve-3d; animation: rotateBox 10s infinite linear;
+            cursor: pointer; transition: 1s;
+        }
+
+        .gift-box div {
+            position: absolute; width: 150px; height: 150px;
+            background: var(--deep-red); border: 3px solid var(--gold);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 50px; box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .box-front  { transform: translateZ(75px); }
+        .box-back   { transform: rotateY(180deg) translateZ(75px); }
+        .box-right  { transform: rotateY(90deg) translateZ(75px); }
+        .box-left   { transform: rotateY(-90deg) translateZ(75px); }
+        .box-top    { transform: rotateX(90deg) translateZ(75px); background: var(--pink) !important; }
+        .box-bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+        @keyframes rotateBox {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        /* المخطوطة الطويلة جداً */
+        .long-scroll {
+            width: 90%; max-width: 500px; margin: 0 auto;
+            background: #fff9f0; border-radius: 20px 20px 0 0;
+            color: #2c0514; padding: 40px 25px;
+            transform-style: preserve-3d; transition: 2s ease;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
+            display: none; /* تظهر بعد الضغط */
+        }
+
+        .letter-title {
+            font-family: 'Amiri', serif; text-align: center; font-size: 2.2rem;
+            color: var(--wax); border-bottom: 2px double var(--gold); margin-bottom: 30px;
+        }
+
+        .mom-image {
+            width: 100%; border-radius: 15px; border: 4px solid var(--gold);
+            margin: 20px 0; transform: translateZ(20px);
+        }
+
+        .heart-divider { text-align: center; font-size: 30px; margin: 20px 0; color: var(--pink); }
+
+        .big-letter-content {
+            font-family: 'Amiri', serif; font-size: 1.4rem; line-height: 2.2;
+            text-align: justify; direction: rtl;
+        }
+
+        .poetry-box {
+            background: #fdf2f4; border-right: 6px solid var(--pink);
+            padding: 20px; margin: 30px 0; font-style: italic;
+            text-align: center; font-weight: bold;
+        }
+
+        /* تأثيرات الطيران */
+        .floating-heart {
+            position: fixed; pointer-events: none; z-index: 1000;
+            animation: floatUp 4s linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <!-- ملف الأغنية - تأكد أن الاسم صحيح -->
+    <audio id="momSong" loop>
+        <source src="Project Name.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- شاشة البداية -->
+    <div id="intro-overlay">
+        <h1 style="color: var(--gold); margin-bottom: 30px; text-align: center;">هدية من القلب لست الحبايب ❤️</h1>
+        <button class="start-btn" onclick="startSurprise()">افتحي المفاجأة يا أمي ✨</button>
+    </div>
+
+    <!-- عالم المفاجأة -->
+    <div id="world">
+        <div class="box-container" id="boxContainer">
+            <div class="gift-box" id="cube" onclick="openLetter()">
+                <div class="box-front">🎁</div>
+                <div class="box-back">❤️</div>
+                <div class="box-right">🌸</div>
+                <div class="box-left">✨</div>
+                <div class="box-top">🎀</div>
+                <div class="box-bottom">👑</div>
+            </div>
+        </div>
+
+        <!-- المخطوطة الطويلة جداً -->
+        <div class="long-scroll" id="scrollMessage">
+            <div class="letter-title">رسالة حب أبدية</div>
+            
+            <div class="big-letter-content">
+                <p><strong>إلى منبعِ الضياء في حياتي، إلى ملكة قلبي وأماني.. أمي الغالية.</strong></p>
+                
+                <p>أكتبُ لكِ هذه الكلمات والقلبُ يفيضُ بمشاعرَ لا تسعُها الأسطر، ولا تحتويها اللغات. اليوم، وفي كل يوم، أجدُ نفسي عاجزاً عن شكرِ الله على نعمةِ وجودكِ في حياتي. أنتِ الشمسُ التي لا تغيبُ عن سمائي، وأنتِ القمرُ الذي ينيرُ عتمةَ أيامي.</p>
+                
+                <img src="0f8c89a5-d22f-4d2d-a816-1a89bef16cbd.jpg" class="mom-image">
+
+                <div class="heart-divider">❤ ❤ ❤</div>
+
+                <p>أمي.. أتذكرُ تلكَ الليالي التي سهرتِ فيها بجانبي وأنا مريض، وتلكَ الأيام التي ضحيتِ فيها براحتكِ وسعادتكِ فقط لترَيْ ابتسامةً صغيرةً على وجهي. لقد كنتِ دائماً الجدارَ الذي أستندُ إليه حين يميلُ العالم، واليدَ التي تمسحُ دمعي حين تضيقُ بي السبل.</p>
+
+                <div class="poetry-box">
+                    يا مَن تحتَ قدميكِ نبتت جنانُ الخلدِ<br>
+                    ويا مَن في عينيكِ أرى أمانَ الغدِ<br>
+                    لو جمعتُ ورودَ الكونِ في باقةٍ<br>
+                    لكانت ذليلةً أمامَ عطرِ يديكِ الندِ
+                </div>
+
+                <p>أنتِ يا أمي مدرسةُ الحبِ الأولى، ومنكِ تعلمتُ كيف أعطي دون انتظارِ مقابل، وكيف أحبُ بصدق، وكيف أكونُ قوياً في مواجهةِ الصعاب. شكراً لأنكِ آمنتِ بي حين شككَ الجميع، وشكراً لأنكِ كنتِ وما زلتِ تدفعينني للأمام بدعواتكِ التي تفتحُ لي كلَّ الأبوابِ المغلقة.</p>
+
+                <img src="599a8b5d-3256-45cc-80f6-d553fd4673df.jpg" class="mom-image">
+
+                <p>في هذا اليومِ المميز، أريدُ أن أعدكِ بأن أظلَّ دائماً ذلكَ الابنَ البار/الابنة البارة التي تفتخرين بها. أدعو اللهَ في كلِّ سجدةٍ أن يحفظكِ لي، وأن يرزقكِ الصحةَ والعافيةَ التي لا تغادرُ جسدكِ أبداً، وأن يبارك في عمركِ لتظلي التاجَ الذي يزينُ رؤوسنا جميعاً.</p>
+
+                <p>سامحيني يا أمي إن قصرتُ يوماً، أو غلبتني الدنيا عن تقبيلِ يدكِ، فوالله إنكِ أغلى ما أملك في هذا الوجود. أنتِ الربيعُ الذي لا يذبل، وأنتِ المعنى الحقيقي للتضحية.</p>
+
+                <img src="52041562-8dbb-4a8d-8bbd-72cad15d41df.jpg" class="mom-image">
+
+                <p style="text-align: center; font-size: 1.8rem; color: var(--gold); font-weight: bold;">
+                    كل عام وأنتِ بخير يا ست الحبايب<br>
+                    كل عام وأنتِ جنتي<br>
+                    ❤️ أحبكِ يا أمي ❤️
+                </p>
+                
+                <div style="height: 50px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const song = document.getElementById('momSong');
+        const world = document.getElementById('world');
+        const intro = document.getElementById('intro-overlay');
+        const scroll = document.getElementById('scrollMessage');
+        const cube = document.getElementById('cube');
+
+        // بدء المفاجأة والأغنية
+        function startSurprise() {
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                world.style.display = 'block';
+                song.play(); // تشغيل الأغنية
+                animateBackground();
+            }, 1000);
+        }
+
+        // فتح الرسالة
+        function openLetter() {
+            cube.style.animation = 'none';
+            cube.style.transform = 'scale(0) rotateX(720deg)';
+            setTimeout(() => {
+                document.getElementById('boxContainer').style.display = 'none';
+                scroll.style.display = 'block';
+                // تأثير طلوع الورقة
+                setTimeout(() => {
+                    scroll.style.transform = 'translateY(-20px)';
+                    window.scrollTo({ top: 400, behavior: 'smooth' });
+                }, 100);
+            }, 800);
+        }
+
+        // قلوب طائرة في الخلفية
+        function animateBackground() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = ['❤️', '🌸', '✨', '🌹'][Math.floor(Math.random()*4)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 4000);
+            }, 400);
+        }
+
+        // تأثير 3D عند تحريك الموبايل (Gyroscope)
+        window.addEventListener('deviceorientation', (e) => {
+            if(scroll.style.display === 'block') {
+                const rX = e.beta / 10;
+                const rY = e.gamma / 10;
+                scroll.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
+            }
+        });
+    </script>
+</body>
+</html>
